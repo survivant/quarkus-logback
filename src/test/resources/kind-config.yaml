@@ -1,0 +1,21 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "0.0.0.0"
+  apiServerPort: 50000
+nodes:
+  - role: control-plane
+    # port forward 80 on the host to 80 on this node
+    extraPortMappings:
+      - containerPort: 30001
+        hostPort: 8003
+        # optional: set the bind address on the host
+        # 0.0.0.0 is the current default
+        listenAddress: "0.0.0.0"
+        # optional: set the protocol to one of TCP, UDP, SCTP.
+        # TCP is the default
+        protocol: TCP
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.comact.com:5000"]
+      endpoint = ["http://docker.comact.com:5000"]
